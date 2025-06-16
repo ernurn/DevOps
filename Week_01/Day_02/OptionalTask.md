@@ -221,7 +221,9 @@ No se encontraron archivos inseguros
 chmod en un comando para cambiar los permisos sobre un archivo o directorio, en este caso, sobre el archivo hola.txt
 Al usuario (u=) le asigna todos los permisos lectura(r), escritura(w) y ejecución(x), al grupo (g=) le asigna los permisos de lectura y ejecución. Y a otros no le otorga ningún permiso.
 
-
-
+## Compartí tu terminal
+- ernesto@Linux:~/DevOps/Week_01/Day_02$ tree
+![Captura de pantalla](https://drive.google.com/file/d/1jJHYTEnGOqRELxJfy9STvClVYxaJ2eJt/view?usp=drive_link)
+#DevOpsConRoxs
 
 
