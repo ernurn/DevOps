@@ -1,10 +1,12 @@
-#Optional Task Day 1
+# Optional Task Day 1
 
 ## Reflexión personal
-###¿Qué significa DevOps para vos después de esta lección?
+### ¿Qué significa DevOps para vos después de esta lección?
+
 DevOps es una metodología que integra el desarrollo de software y las operaciones de TI con el objetivo de acortar el ciclo de vida del desarrollo, aumentar la calidad del software y entregar valor continuo al cliente. DevOps promueve la colaboración, la automatización y la monitorización continua en todas las etapas del desarrollo y la entrega de software.
 
-###¿Qué herramientas ya conocías y cuáles son nuevas?
+### ¿Qué herramientas ya conocías y cuáles son nuevas?
+
 Las herramientas que conozco son:
 - Linux / Bash
 - Docker
@@ -20,6 +22,7 @@ Las herramientas que desconozco son:
 
 ## Primeros Pasos en Linux
 ### Probar comandos básicos
+
 - whoami -> evn
 - pwd -> /home/evn/DevOps/Week_01/Day_01
 - ls -lah -> 
@@ -36,9 +39,11 @@ drwxrwxr-x 3 evn evn 4.0K Jun 11 15:39 ..
 
 ## Desafío: ¡Linux Detectives!
 ### ¿Cuánto tiempo lleva encendido tu sistema?
+
 16:05:51 up  1:13,  1 user,  load average: 0.42, 0.42, 0.44
 
 ### ¿Qué procesos están consumiendo más recursos?
+
 top - 16:07:00 up  1:14,  1 user,  load average: 0.47, 0.46, 0.45
 Tasks: 235 total,   1 running, 234 sleeping,   0 stopped,   0 zombie
 %Cpu(s):  3.1 us,  6.8 sy,  0.0 ni, 87.2 id,  0.0 wa,  0.0 hi,  2.8 si,  0.0 st 
@@ -52,6 +57,7 @@ MiB Swap:   3915.0 total,   3915.0 free,      0.0 used.   2119.8 avail Mem
    4355 evn       20   0 2476976 142900  94968 S   5.3   3.6   0:43.63 /snap/f+
 
 ### ¿Cuánta memoria disponible tenés?
+
                total        used        free      shared  buff/cache   available
 Mem:           3.8Gi       1.8Gi       745Mi        80Mi       1.6Gi       2.1Gi
 Swap:          3.8Gi          0B       3.8Gi
