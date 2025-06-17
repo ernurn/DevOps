@@ -1,0 +1,11 @@
+# Ignorar todo lo que haya en la carpeta logs/
+logs/
+
+# Ignorar archivos .log
+*.log
+
+# Ignorar temporales de VIM y otros editores
+*~
+
+# Ignorar todo lo que haya en la carpeta vagrant
+.vagrant/
