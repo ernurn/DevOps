@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Servidor Nginx - Ernesto</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef2f7;
+      color: #333;
+      text-align: center;
+      padding-top: 60px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #2c3e50;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+    .hora {
+      font-weight: bold;
+      color: #1e88e5;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hola, soy Ernesto Víctor Nurnberg</h1>
+  <p>Fecha y hora de tu dispositivo:</p>
+  <p class="hora" id="hora-visitante"></p>
+
+  <script>
+    const ahora = new Date();
+    document.getElementById("hora-visitante").textContent = ahora.toLocaleString();
+  </script>
+</body>
+</html>
