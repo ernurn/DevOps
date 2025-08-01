@@ -25,6 +25,16 @@ while [ $SECONDS -lt $fin ]; do
 
     echo -e "$TIEMPO\t$MEMORIA$DISCO$CPU" | tee -a "$LOG"
 
+    if [ "$CPU" -gt 85 ]; then
+        alerta_cpu=$((alerta_cpu + 1))
+        if [ "$alerta_cpu" -ge 3 ]; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') - CPU sobrepasó 85% tres veces. Finalizando monitoreo." | tee -a "$LOG"
+            break
+        fi
+    else
+        alerta_cpu=0  # reinicia si baja el uso de CPU
+    fi
+
     sleep 3
 done
 
