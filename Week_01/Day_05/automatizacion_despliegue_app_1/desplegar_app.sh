@@ -6,9 +6,9 @@ LOG="$(pwd)/despliegue_app.log"
 instalar_dependencias() {
   echo "🔧 Instalando dependencias..." | tee -a "$LOG"
   sudo apt update >> "$LOG" 2>&1
-  sudo apt install -y python3 python3-pip python3-venv nginx git >> "$LOG" 2>&1
+  sudo apt install -y python3 python3-pip python3-venv nginx git curl >> "$LOG" 2>&1
 
-  echo "✔️  Habilitando nginx..." | tee -a "$LOG"
+  echo "✔️ Habilitando nginx..." | tee -a "$LOG"
   sudo systemctl enable nginx >> "$LOG" 2>&1
 
   echo "🚀 Iniciando nginx..." | tee -a "$LOG"
@@ -17,6 +17,12 @@ instalar_dependencias() {
 
 # Clonar el repositorio y preparar el entorno Python
 clonar_y_preparar_entorno() {
+  echo "Verificando existencia del repositorio"
+  if [ -d "devops-static-web" ]; then
+   echo "Elimiando repositorio antiguo..." | tee -a "$LOG"
+   rm -rf devops-static-web
+  fi 
+
   echo "📥 Clonando repositorio..." | tee -a "$LOG"
   git clone -b booklibrary https://github.com/roxsross/devops-static-web.git >> "$LOG" 2>&1 || {
     echo "❌ Error al clonar el repositorio" | tee -a "$LOG"
@@ -36,14 +42,14 @@ clonar_y_preparar_entorno() {
   pip install -r requirements.txt >> "$LOG" 2>&1
   pip install gunicorn >> "$LOG" 2>&1
 
-  echo "✅ Entorno preparado correctamente" | tee -a "$LOG"
+  echo "✅  Entorno preparado correctamente" | tee -a "$LOG"
 }
 
-configurar_gunicorn() {
+configurar_gunicorn() {	
   echo "🔥 Iniciando Gunicorn..." | tee -a "$LOG"
   nohup venv/bin/gunicorn -w 4 -b 0.0.0.0:8000 library_site:app >> "$LOG" 2>&1 &
   sleep 3
-  echo "✅ Gunicorn corriendo en http://localhost:8000" | tee -a "$LOG"
+  echo "✅  Gunicorn corriendo en http://localhost:8000" | tee -a "$LOG"
 }
 
 configurar_nginx() {
@@ -81,7 +87,7 @@ EOF
   sudo ln -sf /etc/nginx/sites-available/booklibrary /etc/nginx/sites-enabled/
   if sudo nginx -t >> "$LOG" 2>&1; then
     sudo systemctl reload nginx
-    echo "✅ Nginx configurado y recargado correctamente" | tee -a "$LOG"
+    echo "✅  Nginx configurado y recargado correctamente" | tee -a "$LOG"
   else
     echo "❌ Error en la configuración de Nginx. Revisá el log." | tee -a "$LOG"
   fi
@@ -92,35 +98,35 @@ verificar_servicios() {
 
   # Verificar Nginx (servicio)
   if systemctl is-active --quiet nginx; then
-    echo "✅ Nginx está activo" | tee -a "$LOG"
+    echo "✅  Nginx está activo" | tee -a "$LOG"
   else
     echo "❌ Nginx no está activo" | tee -a "$LOG"
   fi
 
   # Verificar Gunicorn (proceso)
   if pgrep -f "gunicorn.*library_site" > /dev/null; then
-    echo "✅ Gunicorn está corriendo" | tee -a "$LOG"
+    echo "✅  Gunicorn está corriendo" | tee -a "$LOG"
   else
     echo "❌ Gunicorn no está corriendo" | tee -a "$LOG"
   fi
 
   # Verificar puerto 8000 (Gunicorn)
   if ss -tlnp 2>/dev/null | grep -q ":8000"; then
-    echo "✅ Puerto 8000 en uso (Gunicorn)" | tee -a "$LOG"
+    echo "✅  Puerto 8000 en uso (Gunicorn)" | tee -a "$LOG"
   else
     echo "❌ Puerto 8000 no está en uso" | tee -a "$LOG"
   fi
 
   # Probar conexión directa a Gunicorn
   if curl -s http://127.0.0.1:8000 > /dev/null; then
-    echo "✅ Gunicorn responde correctamente" | tee -a "$LOG"
+    echo "✅  Gunicorn responde correctamente" | tee -a "$LOG"
   else
     echo "❌ Gunicorn no responde" | tee -a "$LOG"
   fi
 
   # NUEVO: Probar respuesta a través de Nginx (proxy reverso)
   if curl -s http://localhost > /dev/null; then
-    echo "✅ Nginx proxy responde correctamente" | tee -a "$LOG"
+    echo "✅  Nginx proxy responde correctamente" | tee -a "$LOG"
   else
     echo "❌ Nginx proxy no está respondiendo" | tee -a "$LOG"
   fi
