@@ -164,13 +164,42 @@ EOL
   echo "✅ Nginx configurado correctamente." | tee -a "$LOG"
 }
 
+configurar_pm2_autostart() {
+  echo "⚙️  Configurando arranque automático con PM2..." | tee -a "$LOG"
+
+  # Genera el comando de startup
+  CMD=$(pm2 startup systemd -u $USER --hp $HOME | grep sudo)
+
+  if [ -n "$CMD" ]; then
+    echo "👉 Ejecutando: $CMD" | tee -a "$LOG"
+    eval $CMD >> "$LOG" 2>&1
+  else
+    echo "⚠️ No se pudo generar el comando de startup" | tee -a "$LOG"
+    exit 1
+  fi
+
+  # Guarda el estado actual de las apps
+  pm2 save >> "$LOG" 2>&1 || {
+    echo "❌ Error al guardar el estado de PM2" | tee -a "$LOG"
+    exit 1
+  }
+
+  echo "✅ PM2 configurado para iniciar apps en cada reinicio." | tee -a "$LOG"
+}
+
+deshabilitar_pm2_autostart () {
+ pm2 unstartup systemd
+}
+
+
 main(){  
    echo "🚀 Iniciando despliegue de ecommerce-ms" | tee -a "$LOG"
    instalar_dependencias
    clonar_y_preparar_entorno
    iniciar_servicios  
    configurar_nginx
-   #verificar_servicios
+   configurar_pm2_autostart
+   #deshabilitar_pm2_autostart
 
   echo "🏁 Despliegue finalizado" | tee -a "$LOG"
   echo "📄 Revisá $LOG para detalles." | tee -a "$LOG"
