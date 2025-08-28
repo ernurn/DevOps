@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 LOG="$(pwd)/despliegue_app.log"
 
 # Instalación de dependencias
@@ -8,7 +10,7 @@ instalar_dependencias() {
   sudo apt update >> "$LOG" 2>&1
   sudo apt install -y python3 python3-pip python3-venv nginx git curl >> "$LOG" 2>&1
 
-  echo "✔️ Habilitando nginx..." | tee -a "$LOG"
+  echo "✔️  Habilitando nginx..." | tee -a "$LOG"
   sudo systemctl enable nginx >> "$LOG" 2>&1
 
   echo "🚀 Iniciando nginx..." | tee -a "$LOG"
@@ -17,10 +19,13 @@ instalar_dependencias() {
 
 # Clonar el repositorio y preparar el entorno Python
 clonar_y_preparar_entorno() {
-  echo "Verificando existencia del repositorio"
+  echo "🔍 Verificando existencia del repositorio"
   if [ -d "devops-static-web" ]; then
-   echo "Elimiando repositorio antiguo..." | tee -a "$LOG"
-   rm -rf devops-static-web
+   echo "📦 Moviendo repositorio antiguo..." | tee -a "$LOG"
+   mv devops-static-web devops-static-web-old-$(date +%d-%m-%Y)
+   find . -maxdepth 1 -type d -name 'devops-static-web-old-*' -mtime +15 \
+  -printf '✅ Eliminado respaldo antiguo: %p\n' -exec rm -rf {} \; \
+| tee -a "$LOG"
   fi 
 
   echo "📥 Clonando repositorio..." | tee -a "$LOG"
