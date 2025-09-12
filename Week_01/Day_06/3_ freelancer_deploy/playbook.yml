@@ -1,0 +1,94 @@
+---
+- name: Deploy Fullstack Freelancer
+  hosts: webservers
+  become: yes
+
+  vars:
+    #repo_url: "https://github.com/startbootstrap/startbootstrap-freelancer/archive/gh-pages.zip"
+    repo_url: "https://github.com/startbootstrap/startbootstrap-freelancer/archive/gh-pages.tar.gz"  
+    web_root: "/var/www/freelancer"
+
+  tasks:
+    - name: Install dependencies
+      apt:
+        name: ["nginx", "unzip", "git"]
+        state: present
+        update_cache: yes
+
+    - name: Create directory
+      file:
+        path: "{{ web_root }}"
+        state: directory
+        owner: www-data
+        group: www-data  
+        mode: '0755'
+
+    - name: Download template
+      get_url:
+        url: "{{ repo_url }}"
+        dest: "/tmp/freelancer.tar.gz"
+        mode: '0644'
+
+    - name: Unzip template
+      unarchive:
+        src: "/tmp/freelancer.tar.gz"
+        dest: "{{ web_root }}"
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+        owner: www-data
+        group: www-data
+        mode: '0644'  
+ 
+   #- name: Move files
+     #shell: |
+       #cd /tmp/startbootstrap-freelancer-gh-pages
+       #cp -r * {{ web_root }}/
+       #chown -R www-data:www-data {{ web_root }}
+
+    - name: Clean tmp
+      file:
+        path: "/tmp/freelancer.tar.gz"
+        state: absent
+
+    - name: Config Nginx
+      template:
+        src: files/nginx.conf
+        dest: /etc/nginx/sites-available/freelancer
+      notify: Reload Nginx
+
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/freelancer
+        dest: /etc/nginx/sites-enabled/freelancer
+        state: link
+        force: yes
+
+    - name: Remove default site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+     
+    - name: Fix permissions for directories
+      file:
+        path: "{{ web_root }}"
+        recurse: yes
+        state: directory
+        mode: '0755'      
+
+    - name: Fix permissions for files
+      find:
+        paths: "{{ web_root }}"
+        file_type: file
+      register: files_to_fix
+
+    - name: Apply permissions for files
+      file:
+        path: "{{ item.path }}"
+        mode: '0644'
+      loop: "{{ files_to_fix.files }}"
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded

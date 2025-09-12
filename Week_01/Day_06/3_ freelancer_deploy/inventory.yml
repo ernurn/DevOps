@@ -1,0 +1,7 @@
+webservers:
+  hosts:
+    nodo-03:
+      ansible_host: 172.21.101.171
+      ansible_user: ubuntu
+      ansible_python_interpreter: /usr/bin/python3
+

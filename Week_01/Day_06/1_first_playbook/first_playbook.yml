@@ -1,0 +1,24 @@
+---
+- name: Servers config
+  hosts: webservers
+  become: yes
+  
+  tasks:
+    - name: Install dependencies
+      apt:
+        name: ["git", "tree", "htop"]
+        state: present
+        update_cache: yes
+
+    - name: Create user
+      user:
+        name: deploy
+        groups: sudo
+        append: yes
+        password: "{{ 'miPassword123' | password_hash('sha512') }}"
+
+    - name: firewall config
+      ufw:
+        rule: allow
+        port: "22,80,443"
+        proto: tcp

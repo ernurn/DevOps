@@ -1,0 +1,9 @@
+servers:
+  hosts:
+    nodo-01:
+      ansible_host: 172.20.189.94
+      ansible_user: ubuntu
+
+    nodo-02:
+      ansible_host: 172.20.179.57
+      ansible_user: ubuntu

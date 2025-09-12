@@ -115,3 +115,7 @@ Ejemplo: correr todos los domingos a las 02:00 AM:
 ## 📄 Licencia
 
 Uso libre para fines educativos y de automatización.
+
+## 👨‍💻 Autor
+Ernesto Víctor Nurnberg
+ITech Misiones

@@ -1,0 +1,35 @@
+---
+- name: Deploy landing page
+  hosts: webservers
+  become: yes
+  
+  tasks:
+    - name: Install dependencies
+      apt:
+        name: ["git", "nginx", "ufw"]
+        state: present
+        update_cache: yes
+
+    - name: Create user
+      user:
+        name: deploy
+        groups: sudo
+        append: yes
+        password: "{{ 'miPassword123' | password_hash('sha512') }}"
+
+    - name: firewall config
+      ufw:
+        rule: allow
+        port: "22,80,443"
+        proto: tcp
+
+    - name: Copy files
+      copy:
+        src: files/index.html
+        dest: /var/www/html/  
+
+    - name: restart_nginx
+      service:
+        name: nginx 
+        state: reloaded
+        enabled: yes      
