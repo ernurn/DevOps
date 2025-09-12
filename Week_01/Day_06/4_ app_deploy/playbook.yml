@@ -1,0 +1,9 @@
+---
+- name: app deploy
+  hosts: webservers
+  become: yes
+
+  roles:
+    - devops
+    - nginx
+    - firewall  

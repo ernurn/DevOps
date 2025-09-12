@@ -1,0 +1,17 @@
+---
+- name: Install ufw
+  apt:
+    name: ufw
+    state: present
+    update_cache: yes 
+
+
+- name: firewall config
+  ufw:
+    rule: allow
+    port: "22,80,443"
+    proto: tcp
+
+- name: Enable UFW
+  ufw:
+    state: enabled      

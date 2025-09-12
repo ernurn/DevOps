@@ -1,0 +1,74 @@
+---
+- name: Install Nginx
+  apt: 
+    name: nginx
+    state: present
+    update_cache: yes
+  
+- name: Create web root directory
+  file:
+    path: "{{ web_root }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'      
+
+- name: Download template
+  get_url:
+    url: "{{ repo_url }}"
+    dest: "/tmp/agency.tar.gz"
+    mode: '0644' 
+
+- name: Unarchive template
+  unarchive:
+    src: "/tmp/agency.tar.gz"
+    dest: "{{ web_root }}"
+    remote_src: yes
+    extra_opts: [--strip-components=1] # Evita subcarpetas intermedias
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Clean temporary files
+  file:
+    path: "/tmp/agency.tar.gz"
+    state: absent
+
+- name: Configure Nginx
+  template:
+    src: files/nginx.conf
+    dest: /etc/nginx/sites-available/agency
+  notify: Reload Nginx
+
+- name: Enable site
+  file:
+    src: /etc/nginx/sites-available/agency
+    dest: /etc/nginx/sites-enabled/agency
+    state: link
+    force: yes
+  notify: Reload Nginx  
+
+- name: Remove default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload Nginx    
+
+- name: Fix permissions for directories
+  file:
+    path: "{{ web_root }}"
+    recurse: yes
+    state: directory
+    mode: '0755'
+
+- name: Find all files
+  find:
+    paths: "{{ web_root }}"
+    file_type: file
+  register: files_to_fix
+
+- name: Apply permissions for files
+  file:
+    path: "{{ item.path }}"
+    mode: '0644'
+  loop: "{{ files_to_fix.files }}"
